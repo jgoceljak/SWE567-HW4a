@@ -27,15 +27,16 @@ def getRepos(userID):
 
 def getUserID():
     print("Enter a Github user ID:\n")
-    userID = input()
-    while not re.match(r'^[A-Za-z0-9-]+$', userID):
-        print("Invalid Github user ID:\n")
-        userID = input()
+    user = input()
+    if not re.match(r'^[A-Za-z0-9-]+$', user):
+        print("Invalid Github user ID")
+        return "Invalid user ID"
+    return user
 
-    getRepos(userID)
-    
 
-    
-    
-
-getUserID()
+userID = getUserID()
+while userID == "Invalid user ID":
+    userID = getUserID()
+print(userID)
+getRepos(userID)
+ 
