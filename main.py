@@ -2,41 +2,41 @@ import json
 import requests
 import re
 
-def getRepos(userID):
+def getRepos():
+
+    print("Enter a Github user ID:\n")
+    user = input()
+    while not re.match(r'^[A-Za-z0-9-]+$', user):
+        print("Invalid Github user ID")
+        user = input()
     
-    repos = requests.get(f"https://api.github.com/users/{userID}/repos")
+    repo_response = requests.get(f"https://api.github.com/users/{user}/repos")
 
-    if repos.status_code == 200:
-        repos = repos.json()
+    # Check if the request was successful (status code 200)
+    if repo_response.status_code == 200:
+        # Parse the JSON response
+        repos = repo_response.json()
 
+        # Print the names of the repositories and the number of commits for each
         for repo in repos:
             repo_name = repo['name']
-    
-            commits_response = requests.get(f"https://api.github.com/repos/{userID}/{repo_name}/commits")
             
+            # Make a GET request to the GitHub API to retrieve commits for the repository
+            commits_response = requests.get(f"https://api.github.com/repos/{user}/{repo_name}/commits")
+            
+            # Check if the request for commits was successful (status code 200)
             if commits_response.status_code == 200:
                 commits = commits_response.json()
-                commitsNum = len(commits)
-                print(f"Repository: {repo_name} Number of Commits: {commitsNum}")
+                num_commits = len(commits)
+                print(f"Repository: {repo_name}, Number of Commits: {num_commits}")
             else:
                 print(f"Failed to retrieve commits for {repo_name}. Status code: {commits_response.status_code}")
     else:
-        print(f"Failed to retrieve repositories. Status code: {repos.status_code}")
+        print(f"Failed to retrieve repositories. Status code: {repo_response.status_code}")
             
 
 
-def getUserID():
-    print("Enter a Github user ID:\n")
-    user = input()
-    if not re.match(r'^[A-Za-z0-9-]+$', user):
-        print("Invalid Github user ID")
-        return "Invalid user ID"
-    return user
 
 
-userID = getUserID()
-while userID == "Invalid user ID":
-    userID = getUserID()
-print(userID)
-getRepos(userID)
+getRepos()
  
